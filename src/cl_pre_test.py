@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
-path = "D:/PTIT HN/Sem2_2024_25/Nhap_mon_tri_tue_nhan_tao/BTN_AI/Data_Cleaning_and_Preprocessing"
+path = "/Data_Cleaning_and_Preprocessing"
 
 dft = pd.read_csv(path + "/raw_data/test.csv")
 
