@@ -84,10 +84,13 @@ def Processe_data(input_path, output_path):
     for col in label_cols:
         df[col] = label.fit_transform(df[col].astype(str))
 
-    df.to_csv(output_path, index=True)
+    #create table
+    df = pd.DataFrame(df) 
+
+    df.to_csv(output_path, index=True, encoding= 'utf_8_sig')
 
 
 if __name__ == "__main__":
-    path = "/Data_Cleaning_and_Preprocessing"  
+    path = "D:/PTIT HN/Sem2_2024_25/Nhap_mon_tri_tue_nhan_tao/BTN_AI/Data_Cleaning_and_Preprocessing"  
     Processe_data(path + "/raw_data/test.csv", path + "/processed_data/processed_test.csv")
     Processe_data(path + "/raw_data/train.csv", path + "/processed_data/processed_train.csv")
