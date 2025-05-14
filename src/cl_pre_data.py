@@ -87,7 +87,7 @@ def Processe_data(input_path, output_path):
     #create table
     df = pd.DataFrame(df) 
 
-    df.to_csv(output_path, index=False, encoding= 'utf_8_sig')
+    df.to_csv(output_path, index=False, encoding= 'utf-8')
 
 
 if __name__ == "__main__":
