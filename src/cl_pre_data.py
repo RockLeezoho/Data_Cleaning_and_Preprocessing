@@ -11,7 +11,7 @@ def Processe_data(input_path, output_path):
     #find duplicates
     # print(df.duplicated().sum())
 
-    #identifying garbage value
+    #identifying object value
     # for i in df.select_dtypes(include="object").columns:
     #     print(df[i].value_counts())
     #     print("***"*10)
@@ -19,7 +19,7 @@ def Processe_data(input_path, output_path):
 
     # Missing value treatments
     #too many missing values
-    df.drop(columns=["PoolQC", "MiscFeature", "Alley", "Fence"], inplace=True)
+    df.drop(columns=["Alley", "PoolArea", "Fence", "MiscFeature", "MasVnrType", "FireplaceQu"], inplace=True)
 
     #fill numeric columns with median
     df["LotFrontage"] = df["LotFrontage"].fillna(df["LotFrontage"].median())
@@ -48,12 +48,15 @@ def Processe_data(input_path, output_path):
     # Duplicates and garbage value treatments
     df = df.drop_duplicates()
 
-    # Outliers treatments
+    # Outliers treatments (xu ly ngoai le) => Tang do chinh xac, do on dinh
+    #Interquartile Range (theo phuong phap IQR) - cat nguong (clipping) du lieu ngoai khoang [Q1 - 1.5*IQR, Q3 + 1.5*IQR]
     #only applies to numeric data
     #take whisker threshold
+    #Du lieu nam ngoai khoang [lower_bound, upper_bound] duoc xem la outlier
     def whisker(col):
         q1, q3 = np.percentile(col.dropna(), [25, 75])
-        iqr = q3 - q1
+        #IQR: muc do phan tan cua du lieu giua Q1 va Q3
+        iqr = q3 - q1 
         lw = q1 - 1.5 * iqr
         uw = q3 + 1.5 * iqr
         return lw, uw
@@ -62,8 +65,11 @@ def Processe_data(input_path, output_path):
 
     #clipping of threshold values
     for col in cols_list:
+        #Tinh nguong duoi va nguong tren
         lw, uw = whisker(df[col])
+        #Neu gia tri nho hon lw, thay bang lw
         df[col] = np.where(df[col] < lw, lw, df[col])
+        #Neu gia tri lon hon uw, thay bang uw
         df[col] = np.where(df[col] > uw, uw, df[col])
 
     # print(df.columns.tolist())
@@ -75,7 +81,9 @@ def Processe_data(input_path, output_path):
     # print("Columns to be encrypted:", cat_cols.tolist())
 
     #separate columns with few and many values
+    #Tao cot moi cho moi gia tri (khong co thu tu ro rang)
     onehot_cols = [col for col in cat_cols if df[col].nunique() <= 10]
+    #Gan so nguyen cho tung gia tri (co thu tu ro rang)
     label_cols = [col for col in cat_cols if df[col].nunique() > 10]
 
     df = pd.get_dummies(df, columns=onehot_cols)
@@ -87,7 +95,7 @@ def Processe_data(input_path, output_path):
     #create table
     df = pd.DataFrame(df) 
 
-    df.to_csv(output_path, index=False, encoding= 'utf-8')
+    # df.to_csv(output_path, index=False, encoding= 'utf-8')
 
 
 if __name__ == "__main__":
